@@ -87,4 +87,5 @@ pub unsafe fn create_collection(database_name: String, collection_name: String) 
     file.write(buffer).unwrap();
     //Insert the collection into the database
     database.collections.insert(collection.name.clone(), collection);
+    Ok("");
 }

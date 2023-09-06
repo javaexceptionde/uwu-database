@@ -24,5 +24,5 @@ fn is_valid_database_name(database: String) -> bool {
 }
 
 fn does_database_exist(database: String) -> bool {
-    
+    return false;
 }
