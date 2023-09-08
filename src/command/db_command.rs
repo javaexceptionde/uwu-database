@@ -12,14 +12,14 @@ pub fn handle_db_command(db_command: String, remaining_args: Vec<String>, stream
         return;
     }
     db_command = db_command.replace("\"", "");
-    if !is_valid_database_name(db_command) {
+    if !is_valid_database_name(&db_command) {
         println!("Invalid database name: {}", db_command);
         return;
     }
 
 }
 
-fn is_valid_database_name(database: String) -> bool {
+fn is_valid_database_name(database: &String) -> bool {
     return database.chars().all(|c| c.is_alphanumeric() || c == '_');
 }
 
