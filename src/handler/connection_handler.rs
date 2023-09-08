@@ -83,6 +83,7 @@ fn handle_packet(buffer: &[u8], mut stream: TcpStream) {
     println!("Received: {:?}", buffer[0]);
     if buffer[0] == 0xFF {
         println!("Client exited");
+        stream.shutdown(std::net::Shutdown::Both).unwrap();
         return;
     }
     if buffer[0] == 0x03 {
