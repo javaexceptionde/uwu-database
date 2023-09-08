@@ -22,7 +22,3 @@ pub fn handle_db_command(db_command: String, remaining_args: Vec<String>, stream
 fn is_valid_database_name(database: &String) -> bool {
     return database.chars().all(|c| c.is_alphanumeric() || c == '_');
 }
-
-fn does_database_exist(database: String) -> bool {
-    return false;
-}
