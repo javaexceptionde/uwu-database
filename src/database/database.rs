@@ -60,8 +60,8 @@ lazy_static! {
 
 pub struct Database {
     pub(crate) name: String,
-    id: u16,
-    collections: HashMap<String, Collection>,
+    pub(crate) id: u16,
+    pub(crate) collections: HashMap<String, Collection>,
 }
 
 impl Clone for Database {
@@ -76,9 +76,9 @@ impl Clone for Database {
 
 pub struct Collection {
     pub(crate) name: String,
-    id: u16,
-    documents: HashMap<String, Document>,
-    indexes: HashMap<String, Index>,
+    pub(crate) id: u16,
+    pub(crate) documents: HashMap<String, Document>,
+    pub(crate) indexes: HashMap<String, Index>,
 }
 
 impl Clone for Collection {
@@ -93,8 +93,8 @@ impl Clone for Collection {
 }
 
 pub struct Document {
-    _id: String,
-    file_path: String,
+    pub(crate) _id: String,
+    pub(crate) file_path: String,
 }
 
 impl Clone for Document {
@@ -107,9 +107,9 @@ impl Clone for Document {
 }
 
 pub struct Index {
-    document_id: String,
-    name: String,
-    value: String,
+    pub(crate) document_id: String,
+    pub(crate) name: String,
+    pub(crate) value: String,
 }
 
 impl Clone for Index {
@@ -210,7 +210,7 @@ pub fn get_database(database_name: String) -> Option<Database> {
     DATABASES.get(&database_name)
 }
 
-pub fn get_collection(database_name: String, collection_name: String) -> Option<Collection> {
+pub fn get_collection(database_name: &String, collection_name: String) -> Option<Collection> {
     let database = DATABASES.get(&database_name).unwrap();
     database.collections.get(&collection_name).cloned()
 }

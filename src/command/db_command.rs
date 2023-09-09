@@ -35,14 +35,17 @@ struct CreateCollectionCommand {
 
 impl Command for CreateCollectionCommand {
     fn handle_command(command: String, commandArg: String, subcommands: Vec<SubCommands>, mut stream: TcpStream) {
-        let mut database_name = commandArg;
+        let database_name = commandArg;
         let collection_name = subcommands[0].args.clone();
-        let collection = get_collection(database_name, collection_name);
+        let collection = get_collection(&database_name, collection_name);
         if collection.is_some() {
             stream.write(b"ERR collection already exists").unwrap();
             return;
         }
-        unsafe { create_collection(database_name.clone(), collection.unwrap().name).expect("TODO: panic message"); }
+        unsafe {
+            create_collection(database_name, collection.unwrap().name)
+                .expect("TODO: panic message");
+        }
         stream.write(b"OK").unwrap();
     }
 }
