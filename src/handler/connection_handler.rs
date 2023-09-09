@@ -102,7 +102,7 @@ fn handle_packet(buffer: &[u8], mut stream: TcpStream) {
     let message = String::from_utf8_lossy(buffer);
 
     parse_command(&*message).and_then(|command_args| {
-        command_handler(command_args);
+        command_handler(command_args, stream);
         Ok(())
     }).unwrap_or_else(|e| {
         eprintln!("Error parsing command: {}", e);

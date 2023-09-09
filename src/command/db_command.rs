@@ -3,15 +3,15 @@ use std::net::TcpStream;
 use crate::command::command::{Command, SubCommands};
 use crate::database::database::{create_collection, get_collection, get_database};
 
-struct DBCommand {
+pub(crate) struct DBCommand {
 }
 impl Command for DBCommand {
-    fn handle_command(command: String, commandArg: String, subcommands: Vec<SubCommands>, mut stream: TcpStream) {
+    fn handle_command(command: String, command_arg: String, subcommands: Vec<SubCommands>, mut stream: TcpStream) {
         if subcommands.len() < 1 {
             stream.write(b"ERR wrong number of arguments for 'db' command").unwrap();
             return;
         }
-        let database_name = commandArg;
+        let database_name = command_arg;
         if !is_valid_database_name(&database_name) {
             stream.write(b"ERR invalid database name").unwrap();
             return;
@@ -34,8 +34,8 @@ struct CreateCollectionCommand {
 }
 
 impl Command for CreateCollectionCommand {
-    fn handle_command(command: String, commandArg: String, subcommands: Vec<SubCommands>, mut stream: TcpStream) {
-        let database_name = commandArg;
+    fn handle_command(command: String, command_arg: String, subcommands: Vec<SubCommands>, mut stream: TcpStream) {
+        let database_name = command_arg;
         let collection_name = subcommands[0].args.clone();
         let collection = get_collection(&database_name, collection_name);
         if collection.is_some() {

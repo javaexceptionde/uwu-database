@@ -6,13 +6,13 @@ use std::path::Path;
 use std::sync::{Arc, Mutex};
 use lazy_static::lazy_static;
 
-struct Database_List {
+struct DatabaseList {
     data: Arc<Mutex<HashMap<String, Database>>>,
 }
 
-impl Database_List{
+impl DatabaseList {
     fn new() -> Self {
-        Database_List {
+        DatabaseList {
             data: Arc::new(Mutex::new(HashMap::new()))
         }
     }
@@ -55,7 +55,7 @@ impl Database_List{
 }
 
 lazy_static! {
-    static ref DATABASES: Database_List = Database_List::new();
+    static ref DATABASES: DatabaseList = DatabaseList::new();
 }
 
 pub struct Database {
