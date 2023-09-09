@@ -1,22 +1,50 @@
+use std::io::Write;
 use std::net::TcpStream;
+use crate::command::command::{Command, SubCommands};
+use crate::database::database::{create_collection, get_collection, get_database};
 
-pub fn handle_db_command(db_command: String, remaining_args: Vec<String>, stream: TcpStream) {
-    if !db_command.starts_with("db(") {
-        println!("Invalid command: {}", db_command);
-        return;
+struct DBCommand {
+}
+impl Command for DBCommand {
+    fn handle_command(command: String, commandArg: String, subcommands: Vec<SubCommands>, mut stream: TcpStream) {
+        if subcommands.len() < 1 {
+            stream.write(b"ERR wrong number of arguments for 'db' command").unwrap();
+            return;
+        }
+        let database_name = commandArg;
+        if !is_valid_database_name(&database_name) {
+            stream.write(b"ERR invalid database name").unwrap();
+            return;
+        }
+        let database = get_database(database_name);
+        if database.is_none() {
+            stream.write(b"ERR database not found").unwrap();
+            return;
+        }
+        let first_subcommand = &subcommands[0].command;
+        if first_subcommand.eq_ignore_ascii_case("createCollection") {
+            CreateCollectionCommand::handle_command(command, database.unwrap().name, subcommands, stream);
+        } else {
+            stream.write(b"ERR unknown subcommand for 'db' command").unwrap();
+        }
     }
-    let mut db_command = db_command.replace("db(", "");
-    db_command = db_command.replace(")", "");
-    if !db_command.starts_with("\"") || !db_command.ends_with("\"") {
-        println!("Invalid command: {}", db_command);
-        return;
-    }
-    db_command = db_command.replace("\"", "");
-    if !is_valid_database_name(&db_command) {
-        println!("Invalid database name: {}", db_command);
-        return;
-    }
+}
 
+struct CreateCollectionCommand {
+}
+
+impl Command for CreateCollectionCommand {
+    fn handle_command(command: String, commandArg: String, subcommands: Vec<SubCommands>, mut stream: TcpStream) {
+        let mut database_name = commandArg;
+        let collection_name = subcommands[0].args.clone();
+        let collection = get_collection(database_name, collection_name);
+        if collection.is_some() {
+            stream.write(b"ERR collection already exists").unwrap();
+            return;
+        }
+        unsafe { create_collection(database_name.clone(), collection.unwrap().name).expect("TODO: panic message"); }
+        stream.write(b"OK").unwrap();
+    }
 }
 
 fn is_valid_database_name(database: &String) -> bool {

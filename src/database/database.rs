@@ -1,9 +1,7 @@
-use std::collections::hash_map::Keys;
 use std::collections::HashMap;
 use std::fmt::Error;
 use std::fs::File;
 use std::io::Write;
-use std::iter::Cloned;
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 use lazy_static::lazy_static;
@@ -61,7 +59,7 @@ lazy_static! {
 }
 
 pub struct Database {
-    name: String,
+    pub(crate) name: String,
     id: u16,
     collections: HashMap<String, Collection>,
 }
@@ -77,7 +75,7 @@ impl Clone for Database {
 }
 
 pub struct Collection {
-    name: String,
+    pub(crate) name: String,
     id: u16,
     documents: HashMap<String, Document>,
     indexes: HashMap<String, Index>,
@@ -207,3 +205,13 @@ pub unsafe fn create_collection(database_name: String, collection_name: String) 
     database.collections.insert(collection.name.clone(), collection);
     Ok(collection_id)
 }
+
+pub fn get_database(database_name: String) -> Option<Database> {
+    DATABASES.get(&database_name)
+}
+
+pub fn get_collection(database_name: String, collection_name: String) -> Option<Collection> {
+    let database = DATABASES.get(&database_name).unwrap();
+    database.collections.get(&collection_name).cloned()
+}
+
